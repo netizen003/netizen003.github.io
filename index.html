@@ -4,115 +4,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тестирование по C#</title>
-    <!-- Подключение Bootstrap 5 (CSS) -->
+    <title>Тестирование по C# | ProLevel</title>
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --primary-color: #512BD4;
+            /* Цвет C# */
+            --bg-color: #f8f9fc;
+        }
+
         body {
-            background-color: #f4f7f6;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+            color: #333;
+        }
+
+        /* Красивый фон */
+        .bg-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 10% 20%, rgba(81, 43, 212, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(81, 43, 212, 0.05) 0%, transparent 40%);
         }
 
         .quiz-container {
-            max-width: 700px;
-            margin-top: 50px;
+            max-width: 800px;
+            margin-top: 40px;
+            margin-bottom: 40px;
             background: #ffffff;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .brand-header i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
         }
 
         .question-text {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 600;
-            margin-bottom: 20px;
-            color: #2c3e50;
+            margin-bottom: 25px;
+            color: #1a1a1a;
+            line-height: 1.5;
         }
 
-        .form-check {
-            padding: 12px 12px 12px 40px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            margin-bottom: 10px;
+        /* Стилизация вариантов ответа */
+        .option-card {
+            display: block;
+            position: relative;
+            padding: 15px 20px 15px 50px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            margin-bottom: 15px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s ease;
+            font-size: 1.05rem;
         }
 
-        .form-check:hover {
-            background-color: #f8f9fa;
+        .option-card:hover {
+            border-color: var(--primary-color);
+            background-color: #fcfbff;
         }
 
-        .form-check-input:checked+.form-check-label {
-            font-weight: bold;
-            color: #0d6efd;
+        .option-card input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .option-checkmark {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            height: 20px;
+            width: 20px;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        /* Состояние выбранного ответа */
+        .option-card input:checked~.option-checkmark {
+            border-color: var(--primary-color);
+            background-color: var(--primary-color);
+        }
+
+        .option-card input:checked~.option-checkmark::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: white;
+        }
+
+        .option-card:has(input:checked) {
+            border-color: var(--primary-color);
+            background-color: #f4f0ff;
+            font-weight: 600;
+        }
+
+        /* Кнопки */
+        .btn-custom {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .btn-custom:hover:not(:disabled) {
+            background: #3f1fa8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(81, 43, 212, 0.3);
+            color: white;
+        }
+
+        .btn-custom:disabled {
+            background: #ccc;
+        }
+
+        /* Анимация появления вопроса */
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Прогресс-бар */
+        .progress {
+            background-color: #e9ecef;
+            border-radius: 10px;
+            height: 8px;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            background-color: var(--primary-color);
+            border-radius: 10px;
+            transition: width 0.4s ease;
         }
 
         .hidden {
             display: none !important;
+        }
+
+        .result-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 
 <body>
 
+    <div class="bg-shapes"></div>
+
     <div class="container">
         <div class="quiz-container mx-auto">
 
             <!-- Экран загрузки -->
-            <div id="loading-screen" class="text-center">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Загрузка...</span>
-                </div>
-                <p class="mt-3">Загрузка вопросов из Google Таблиц...</p>
+            <div id="loading-screen" class="text-center py-5">
+                <div class="spinner-border text-primary"
+                    style="color: var(--primary-color) !important; width: 3rem; height: 3rem;" role="status"></div>
+                <p class="mt-4 text-muted fw-bold">Загрузка банка вопросов...</p>
             </div>
 
             <!-- Начальный экран -->
-            <div id="start-screen" class="text-center hidden">
-                <h2 class="mb-4">Тест по языку C#</h2>
-                <p class="text-muted mb-4">Проверьте свои знания. В тесте <span id="total-questions-start">0</span>
-                    вопросов.</p>
-                <button class="btn btn-primary btn-lg w-100" onclick="startQuiz()">Начать тестирование</button>
+            <div id="start-screen" class="text-center hidden py-4">
+                <div class="brand-header">
+                    <i class="fa-brands fa-microsoft"></i>
+                    <h1 class="fw-bold">C# Knowledge Check</h1>
+                    <p class="text-muted fs-5">Проверьте свои знания языка программирования C#</p>
+                </div>
+                <div class="alert alert-light border mt-4 mb-4">
+                    <i class="fa-solid fa-circle-info text-primary"></i>
+                    Вам будет предложено <strong>5 случайных вопросов</strong> из базы.
+                </div>
+                <button class="btn btn-custom w-100" onclick="startQuiz()">Начать тестирование</button>
             </div>
 
             <!-- Экран с вопросами -->
             <div id="quiz-screen" class="hidden">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="badge bg-secondary" id="progress-text">Вопрос 1 из 10</span>
-                    <span class="badge bg-info text-dark" id="score-text">Правильно: 0</span>
-                </div>
-                <div class="progress mb-4" style="height: 10px;">
-                    <div id="progress-bar" class="progress-bar bg-success" role="progressbar" style="width: 0%;"></div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted fw-bold" id="progress-text">Вопрос 1 из 5</span>
+                    <span class="badge" style="background: rgba(81, 43, 212, 0.1); color: var(--primary-color);"
+                        id="score-text">Правильно: 0</span>
                 </div>
 
-                <div class="question-text" id="question-text">Текст вопроса</div>
-                <form id="options-form"></form>
+                <div class="progress">
+                    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;"></div>
+                </div>
 
-                <button class="btn btn-primary w-100 mt-4" id="next-btn" onclick="nextQuestion()"
-                    disabled>Ответить</button>
+                <div id="question-container" class="fade-in">
+                    <div class="question-text" id="question-text">Текст вопроса</div>
+                    <form id="options-form"></form>
+                </div>
+
+                <button class="btn btn-custom w-100 mt-3" id="next-btn" onclick="nextQuestion()" disabled>
+                    Ответить <i class="fa-solid fa-arrow-right ms-2"></i>
+                </button>
             </div>
 
             <!-- Экран результатов -->
             <div id="result-screen" class="text-center hidden">
-                <h2 class="mb-4">Тестирование завершено!</h2>
-                <div class="display-4 mb-3 text-success" id="final-score">0 / 0</div>
-                <p class="fs-5 mb-4" id="result-message"></p>
-                <button class="btn btn-success btn-lg w-100" onclick="restartQuiz()">Пройти еще раз</button>
+                <div id="result-icon-container" class="result-icon"></div>
+                <h2 class="fw-bold mb-3">Тестирование завершено!</h2>
+
+                <div class="d-inline-block p-4 rounded-circle mb-4" style="border: 5px solid var(--primary-color);">
+                    <span class="display-4 fw-bold" id="final-score" style="color: var(--primary-color);">0 / 5</span>
+                </div>
+
+                <h4 class="mb-4" id="result-message"></h4>
+
+                <button class="btn btn-custom w-100" onclick="restartQuiz()">
+                    <i class="fa-solid fa-rotate-right me-2"></i> Пройти еще раз
+                </button>
             </div>
 
         </div>
     </div>
 
-    <!-- Подключение Bootstrap 5 (JS) -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         // ВСТАВЬТЕ СЮДА ID ВАШЕЙ GOOGLE ТАБЛИЦЫ
-        const SPREADSHEET_ID = '1CrdKbezzlG7cCT4U_FbA9JZl-3FA9CrGXroJazGslp0';
+        const SPREADSHEET_ID = '1JXaSn3zwvLBXcNu1IEmDART9lZbo5nh5rS-EZIyzg7M';
 
-        // URL для получения данных через Google Visualization API (возвращает JSON)
+        const QUESTIONS_TO_SHOW = 5; // Сколько вопросов выбирать случайно
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
 
-        let questions = [];
+        let allQuestions = [];      // Банк всех вопросов (100 шт)
+        let quizQuestions = [];     // Выбранные 5 вопросов для текущего теста
         let currentQuestionIndex = 0;
         let score = 0;
         let selectedOption = null;
@@ -129,29 +289,26 @@
         const progressBar = document.getElementById('progress-bar');
         const nextBtn = document.getElementById('next-btn');
 
-        // Инициализация при загрузке страницы
+        // Инициализация
         window.onload = async () => {
-            if (SPREADSHEET_ID === 'ВАШ_ID_ТАБЛИЦЫ') {
-                alert('Пожалуйста, укажите ID вашей Google Таблицы в коде JavaScript.');
+            if (SPREADSHEET_ID === '1JXaSn3zwvLBXcNu1IEmDART9lZbo5nh5rS-EZIyzg7M') {
+                alert('Пожалуйста, укажите ID вашей Google Таблицы.');
                 loadingScreen.innerHTML = '<p class="text-danger">Ошибка: Не указан ID таблицы.</p>';
                 return;
             }
             await fetchQuestions();
         };
 
-        // Получение данных из Google Sheets
+        // Загрузка данных из Google Sheets
         async function fetchQuestions() {
             try {
                 const response = await fetch(SHEET_URL);
                 const text = await response.text();
-
-                // Google возвращает ответ в формате: google.visualization.Query.setResponse({...});
-                // Нам нужно вырезать только JSON часть
                 const jsonString = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
                 const data = JSON.parse(jsonString);
 
                 const rows = data.table.rows;
-                questions = rows.map(row => {
+                allQuestions = rows.map(row => {
                     return {
                         question: row.c[0] ? row.c[0].v : '',
                         options: [
@@ -160,15 +317,14 @@
                             row.c[3] ? row.c[3].v : '',
                             row.c[4] ? row.c[4].v : ''
                         ],
-                        correctIndex: row.c[5] ? parseInt(row.c[5].v) - 1 : 0 // -1 т.к. в таблице ответы 1-4, а индексы в JS 0-3
+                        correctIndex: row.c[5] ? parseInt(row.c[5].v) - 1 : 0
                     };
                 }).filter(q => q.question); // Убираем пустые строки
 
-                if (questions.length === 0) {
-                    throw new Error('Таблица пуста или имеет неверный формат.');
+                if (allQuestions.length < QUESTIONS_TO_SHOW) {
+                    throw new Error(`В таблице должно быть хотя бы ${QUESTIONS_TO_SHOW} вопросов.`);
                 }
 
-                document.getElementById('total-questions-start').innerText = questions.length;
                 loadingScreen.classList.add('hidden');
                 startScreen.classList.remove('hidden');
 
@@ -177,18 +333,35 @@
                 loadingScreen.innerHTML = `
                 <div class="alert alert-danger">
                     <strong>Ошибка!</strong> Не удалось загрузить данные.<br>
-                    Убедитесь, что таблица открыта для чтения по ссылке и ID указан верно.<br>
                     <small>${error.message}</small>
                 </div>`;
             }
         }
 
+        // Алгоритм перемешивания Фишера-Йетса
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
         // Начало теста
         function startQuiz() {
             startScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
             quizScreen.classList.remove('hidden');
+
+            // Перемешиваем весь банк и берем первые 5
+            const shuffledBank = shuffleArray([...allQuestions]);
+            quizQuestions = shuffledBank.slice(0, QUESTIONS_TO_SHOW);
+
             currentQuestionIndex = 0;
             score = 0;
+
             showQuestion();
         }
 
@@ -197,34 +370,38 @@
             selectedOption = null;
             nextBtn.disabled = true;
 
-            const q = questions[currentQuestionIndex];
+            const q = quizQuestions[currentQuestionIndex];
 
-            // Обновление прогресса
-            progressText.innerText = `Вопрос ${currentQuestionIndex + 1} из ${questions.length}`;
+            // Обновление UI
+            progressText.innerText = `Вопрос ${currentQuestionIndex + 1} из ${QUESTIONS_TO_SHOW}`;
             scoreText.innerText = `Правильно: ${score}`;
-            const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
+            const progressPercent = ((currentQuestionIndex) / QUESTIONS_TO_SHOW) * 100;
             progressBar.style.width = `${progressPercent}%`;
 
-            // Вывод текста вопроса
+            // Анимация смены вопроса
+            const container = document.getElementById('question-container');
+            container.classList.remove('fade-in');
+            void container.offsetWidth; // Триггер перезапуска анимации
+            container.classList.add('fade-in');
+
             questionText.innerText = q.question;
 
-            // Вывод вариантов ответа
+            // Генерация вариантов ответа
             optionsForm.innerHTML = '';
             q.options.forEach((option, index) => {
-                if (!option) return; // Пропускаем пустые варианты
+                if (!option) return;
 
-                const div = document.createElement('div');
-                div.className = 'form-check';
-                div.innerHTML = `
-                <input class="form-check-input" type="radio" name="option" id="option${index}" value="${index}">
-                <label class="form-check-label w-100" for="option${index}">
-                    ${option}
-                </label>
+                const label = document.createElement('label');
+                label.className = 'option-card';
+                label.innerHTML = `
+                <input type="radio" name="option" value="${index}">
+                <span class="option-checkmark"></span>
+                ${option}
             `;
-                optionsForm.appendChild(div);
+                optionsForm.appendChild(label);
             });
 
-            // Обработчик выбора ответа
+            // Обработчик выбора
             optionsForm.querySelectorAll('input[name="option"]').forEach(radio => {
                 radio.addEventListener('change', (e) => {
                     selectedOption = parseInt(e.target.value);
@@ -232,13 +409,13 @@
                 });
             });
 
-            // Меняем текст кнопки на последнем вопросе
-            if (currentQuestionIndex === questions.length - 1) {
-                nextBtn.innerText = 'Завершить тест';
-                nextBtn.classList.replace('btn-primary', 'btn-success');
+            // Изменение кнопки на последнем вопросе
+            if (currentQuestionIndex === QUESTIONS_TO_SHOW - 1) {
+                nextBtn.innerHTML = 'Завершить тест <i class="fa-solid fa-check ms-2"></i>';
+                nextBtn.style.background = '#10b981'; // Зеленый
             } else {
-                nextBtn.innerText = 'Ответить';
-                nextBtn.classList.replace('btn-success', 'btn-primary');
+                nextBtn.innerHTML = 'Ответить <i class="fa-solid fa-arrow-right ms-2"></i>';
+                nextBtn.style.background = 'var(--primary-color)';
             }
         }
 
@@ -246,14 +423,13 @@
         function nextQuestion() {
             if (selectedOption === null) return;
 
-            // Проверка правильности
-            if (selectedOption === questions[currentQuestionIndex].correctIndex) {
+            if (selectedOption === quizQuestions[currentQuestionIndex].correctIndex) {
                 score++;
             }
 
             currentQuestionIndex++;
 
-            if (currentQuestionIndex < questions.length) {
+            if (currentQuestionIndex < QUESTIONS_TO_SHOW) {
                 showQuestion();
             } else {
                 showResults();
@@ -265,23 +441,32 @@
             quizScreen.classList.add('hidden');
             resultScreen.classList.remove('hidden');
 
-            document.getElementById('final-score').innerText = `${score} / ${questions.length}`;
+            document.getElementById('final-score').innerText = `${score} / ${QUESTIONS_TO_SHOW}`;
 
-            const percentage = (score / questions.length) * 100;
+            const iconContainer = document.getElementById('result-icon-container');
+            const percentage = (score / QUESTIONS_TO_SHOW) * 100;
             let message = '';
 
-            if (percentage === 100) message = 'Идеально! Вы отлично знаете C#!';
-            else if (percentage >= 80) message = 'Отличный результат! Вы хорошо разбираетесь в C#.';
-            else if (percentage >= 50) message = 'Неплохо, но есть над чем поработать.';
-            else message = 'Стоит повторить материал и попробовать снова.';
+            if (percentage === 100) {
+                message = 'Идеально! Вы настоящий C# разработчик!';
+                iconContainer.innerHTML = '<i class="fa-solid fa-trophy text-warning"></i>';
+            } else if (percentage >= 80) {
+                message = 'Отличный результат! Так держать.';
+                iconContainer.innerHTML = '<i class="fa-solid fa-star text-warning"></i>';
+            } else if (percentage >= 40) {
+                message = 'Неплохо, но есть куда расти.';
+                iconContainer.innerHTML = '<i class="fa-solid fa-thumbs-up text-primary" style="color: var(--primary-color)!important;"></i>';
+            } else {
+                message = 'Стоит повторить теорию и попробовать снова.';
+                iconContainer.innerHTML = '<i class="fa-solid fa-book-open text-danger"></i>';
+            }
 
             document.getElementById('result-message').innerText = message;
         }
 
-        // Перезапуск теста
+        // Перезапуск
         function restartQuiz() {
-            resultScreen.classList.add('hidden');
-            startQuiz(); // Возвращаемся сразу к вопросам, не скачивая данные заново
+            startQuiz(); // Сразу запускает новый раунд с новыми 5 вопросами
         }
     </script>
 </body>
